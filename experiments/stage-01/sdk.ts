@@ -4,7 +4,7 @@ const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY ,
 });
 const message = await client.messages.create({
-  model: "claude-opus-5-5",
+    model: "Haiku-1",
     max_tokens: 1000,
   
   messages: [
