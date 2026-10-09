@@ -17,7 +17,7 @@ try {
     // STEP 2
     conversation.push(new HumanMessage("What is my name?"));
     const response2 = await model.invoke(conversation);
-    if (response.response_metadata.stop_reason === 'max_tokens') {
+    if (response2.response_metadata.stop_reason === 'max_tokens') {
         throw new Error("Max tokens reached. Consider increasing maxTokens in config.ts or adjusting your prompt.");
     }
     console.log("*******")
