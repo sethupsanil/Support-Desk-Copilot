@@ -4,7 +4,7 @@ const client = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY ,
 });
 const message = await client.messages.create({
-    model: "Haiku-1",
+  model: "claude-haiku-5-5",
     max_tokens: 1000,
   
   messages: [
@@ -14,7 +14,11 @@ const message = await client.messages.create({
     }
   ]
 });
+console.log("**************************")
+console.log("message ", message)
+console.log("**************************")
 for (const block of message.content) {
+
   if (block.type === "text") {
     console.log(block.text);
   }
