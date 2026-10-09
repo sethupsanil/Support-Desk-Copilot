@@ -1,0 +1,24 @@
+{
+  "name": "support-desk-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Support Desk Copilot: a learning project for agentic AI with Claude, LangChain and LangGraph",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "run": "tsx --env-file=.env"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}
