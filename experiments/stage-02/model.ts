@@ -1,4 +1,5 @@
 import { HumanMessage, SystemMessage, type BaseMessage } from '@langchain/core/messages';
+import { errorHandler } from '../helper.js';
 import { model } from './llm.js';
 try {
     const conversation: BaseMessage[] = [
@@ -28,10 +29,5 @@ try {
     console.log("*******")
 }
 catch (err) {
-    if (err instanceof Error && "status" in err && err.status === 401) {
-        console.error("Authentication failed: check ANTHROPIC_API_KEY in .env");
-        process.exitCode = 1;
-    } else {
-        console.error("Error occurred:", err);
-    }
+    errorHandler(err);
 }
