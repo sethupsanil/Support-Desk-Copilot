@@ -11,23 +11,23 @@ try {
 
 
 
-    const promptValue =  chatPrompt.pipe(model)
-       const pipeValue= await promptValue.invoke({
+    const chain = chatPrompt.pipe(model)
+       const firstReply= await chain.invoke({
         product: "Laptop",
         question: "best  2 laptop in 2026?"
     })
-    checkMaxTokens(pipeValue)
-   const response = await new StringOutputParser().invoke(pipeValue)
-   console.log("response", response)
+    checkMaxTokens(firstReply)
+   const firstText = await new StringOutputParser().invoke(firstReply)
+   console.log("response", firstText)
 
 
-    const response2 = await promptValue.invoke({
+    const secondReply = await chain.invoke({
         product: "bike",
         question: "best bike in 2025?"
     });
-  
-        checkMaxTokens(response2)
-console.log("response2", await new StringOutputParser().invoke(response2))
+
+        checkMaxTokens(secondReply)
+console.log("response2", await new StringOutputParser().invoke(secondReply))
   //  logResponseContent(response2);
 
 } catch (err) { errorHandler(err); }
