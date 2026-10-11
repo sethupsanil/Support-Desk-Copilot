@@ -1,4 +1,4 @@
-import type { AIMessage } from "@langchain/core/messages";
+import type { AIMessage, BaseMessage } from "@langchain/core/messages";
 
 export const errorHandler = (err: unknown) => {
     if (err instanceof Error && "status" in err) {
@@ -40,8 +40,23 @@ export const logResponseContent = (response: AIMessage) => {
     }
 }
 
-export const checkMaxTokens = (response: AIMessage) => {
-    if (response.response_metadata.stop_reason === 'max_tokens') {
+export interface HasResponseMetadata {
+    response_metadata?: object;
+}
+
+export const checkMaxTokens = (response: HasResponseMetadata) => {
+    const metadata = response.response_metadata;
+    if (metadata && "stop_reason" in metadata && metadata.stop_reason === 'max_tokens') {
         throw new Error("Max tokens reached. Consider increasing maxTokens in config.ts or adjusting your prompt.");
     }
+}
+
+export interface StructuredResult<T> {
+    raw: BaseMessage;
+    parsed: T;
+}
+
+export const logParsedResponse = <T>(response: StructuredResult<T>) => {
+    checkMaxTokens(response.raw);
+    console.log(response.parsed);
 }
