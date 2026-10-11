@@ -53,10 +53,13 @@ export const checkMaxTokens = (response: HasResponseMetadata) => {
 
 export interface StructuredResult<T> {
     raw: BaseMessage;
-    parsed: T;
+    parsed: T | null;
 }
 
 export const logParsedResponse = <T>(response: StructuredResult<T>) => {
     checkMaxTokens(response.raw);
+    if (response.parsed === null) {
+        throw new Error("Structured output failed to parse. Inspect the raw message to see what the model returned.");
+    }
     console.log(response.parsed);
 }

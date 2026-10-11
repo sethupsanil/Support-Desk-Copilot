@@ -11,7 +11,7 @@ try {
     const structuredModel = model.withStructuredOutput(structureSchema, { includeRaw: true });
     const response = await chatPrompt.pipe(structuredModel).invoke({
         area: "hardware",
-        message: "My laptop is not turning on. I tried charging it, but nothing happens..",
+        message: "hello",
     });
     logParsedResponse(response);
 }catch (err) { errorHandler(err); }
