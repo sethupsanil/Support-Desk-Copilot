@@ -20,19 +20,19 @@ const modelWithStructuredOutput = model.withStructuredOutput(structureSchema, { 
 
 const chatPrompt = ChatPromptTemplate.fromMessages([
     ["system", `You are a support ticket helper for help user for support their order on the platform. 
-     Your task is to generate structured support ticket based on user message and {intent}`],
+     Your task is to generate structured support ticket based on user message and {chanel}`],
     ["human", "{message}"],
 ]);
 
     // Chaining structured op and chat prompt, 
 const response = await chatPrompt.pipe(modelWithStructuredOutput).invoke({
-    intent: "request",
+    chanel: "request",
     message: "I would like to request a refund for my recent order.",
 });
     logParsedResponse(response);
     
     const response1 = await chatPrompt.pipe(modelWithStructuredOutput).invoke({
-    intent: "request",
+        chanel: "request",
     message: "I would like to know my status of the imac i added to the cart",
 });
     logParsedResponse(response1);
