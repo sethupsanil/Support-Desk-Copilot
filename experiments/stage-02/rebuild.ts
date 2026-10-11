@@ -24,6 +24,7 @@ const chatPrompt = ChatPromptTemplate.fromMessages([
     ["human", "{message}"],
 ]);
 
+    // Chaining structured op and chat prompt, 
 const response = await chatPrompt.pipe(modelWithStructuredOutput).invoke({
     intent: "request",
     message: "I would like to request a refund for my recent order.",
