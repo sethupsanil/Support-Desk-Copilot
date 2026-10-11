@@ -1,7 +1,8 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { errorHandler, logParsedResponse } from '../helper.js';
-import { structureSchema } from '../schema/structure.schema.js';
-import { model } from './llm.js';
+import { errorHandler } from '../../src/llm/checks.js';
+import { logParsedResponse } from '../helper.js';
+import { structureSchema } from '../../src/schema/structure.schema.js';
+import { model } from '../../src/llm/model.js';
 try {
     const chatPrompt = ChatPromptTemplate.fromMessages([
         ["system", `You are a support ticket helper for {area}. 

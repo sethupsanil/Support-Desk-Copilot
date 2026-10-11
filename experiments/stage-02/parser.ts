@@ -1,7 +1,7 @@
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { checkMaxTokens, errorHandler } from '../helper.js';
-import { model } from './llm.js';
+import { checkMaxTokens, errorHandler } from '../../src/llm/checks.js';
+import { model } from '../../src/llm/model.js';
 
 try {
     const chatPrompt = ChatPromptTemplate.fromMessages([

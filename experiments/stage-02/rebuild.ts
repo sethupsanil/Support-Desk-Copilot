@@ -1,8 +1,9 @@
 import { ChatAnthropic } from '@langchain/anthropic';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import * as z from 'zod';
-import { config } from '../config.js';
-import { errorHandler, logParsedResponse } from '../helper.js';
+import { config } from '../../src/config/config.js';
+import { errorHandler } from '../../src/llm/checks.js';
+import { logParsedResponse } from '../helper.js';
 
 try {
     const model = new ChatAnthropic({

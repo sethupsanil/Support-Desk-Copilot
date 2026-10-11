@@ -1,6 +1,6 @@
 import { HumanMessage, SystemMessage, type BaseMessage } from '@langchain/core/messages';
-import { errorHandler } from '../helper.js';
-import { model } from './llm.js';
+import { errorHandler } from '../../src/llm/checks.js';
+import { model } from '../../src/llm/model.js';
 try {
     const conversation: BaseMessage[] = [
         new SystemMessage("You are a helpful assistant that responds in a concise manner.and always answers single word answers."),
