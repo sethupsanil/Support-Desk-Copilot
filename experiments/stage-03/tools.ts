@@ -3,19 +3,27 @@ import { BaseMessage, tool } from "langchain";
 import * as z from 'zod';
 import { checkMaxTokens } from "../../src/llm/checks.js";
 import { model } from "../../src/llm/model.js";
-import { errorHandler, logResponseContent } from "../helper.js";
+import { errorHandler, logParsedResponse } from "../helper.js";
 const schema = z.object({
-    orderId:z.string().describe('Order id to search')
+    orderId: z.number().describe('Order id to search')
 })
 
-const searchFn = (orderId: {orderId:string}) => {
-    const orderDetails = fakeOrder.find(v => v.id.toString() === orderId.orderId);
+const outPutSchema = z.object({
+    status: z.enum(["found", "not found"]).describe("flag to determine if the data has been found "),
+    data: z.object({
+        orderId: z.number().describe('Order id of the data'),
+        status: z.string().describe('status of the data'),
+        item: z.string().describe('item of the data'),
+    }).nullable().describe("data will be null if the status is not found, only the if  the search returns value we need this data object")
+})
+const searchFn = (orderId: { orderId: string }) => {
+    const orderDetails = fakeOrder.find(v => v.id === orderId.orderId);
     return orderDetails ? orderDetails : 'Not found';
 }
 const searchTool = tool(searchFn, {
     name: "searchTool",
     schema,
-    description:'Tool to identify the order details that matches to the order id'
+    description: 'Tool to identify the order details that matches to the order id'
 })
 const fakeOrder = [
     { id: "1", status: 'inprogress', item: "abc" },
@@ -24,39 +32,41 @@ const fakeOrder = [
 ];
 
 try {
-    
 
 
-const prompt = ChatPromptTemplate.fromMessages([
-    {  role:'system', content: 'You are a oder support. You have to search and find the order details and give appropriate response' },
-    {role:'human',content:'Find the oder details for this oder {id}'}
-])
 
-// Model message []
-const message: BaseMessage[] = (await prompt.invoke({  })).toChatMessages();
+    const prompt = ChatPromptTemplate.fromMessages([
+        { role: 'system', content: 'You are a oder support. You have to search and find the order details and give appropriate response' },
+        { role: 'human', content: 'Find the oder details for this oder {id}' }
+    ])
 
-// Bind tools and model
-const bindTool= model.bindTools([searchTool])
+    // Structured schema
+    const modelWithStructured = model.withStructuredOutput(outPutSchema, { includeRaw: true })
 
-// Calling model with the message array 
-const response = await bindTool.invoke(message);
+    // Model message []
+    const message: BaseMessage[] = (await prompt.invoke({ id: "1" })).toChatMessages();
 
-// checking for stop reason is max token
-checkMaxTokens(response.response_metadata);
+    // Bind tools and model
+    const bindTool = model.bindTools([searchTool])
 
-// Pushing model replay in to the message array
-message.push(response);
+    // Calling model with the message array 
+    const response = await bindTool.invoke(message);
 
-// looping tool calls and calling tools
-for (const toolCall of response.tool_calls ?? []) {
-  const toolMessage = await searchTool.invoke(toolCall); // returns a ToolMessage
-  message.push(toolMessage);
-}
+    // checking for stop reason is max token
+    checkMaxTokens(response);
 
-// Sending the latest message [] to model
-const newResponse = await bindTool.invoke(message);
-checkMaxTokens(newResponse);
-logResponseContent(newResponse)
+    // Pushing model replay in to the message array
+    message.push(response);
+
+    // looping tool calls and calling tools
+    for (const toolCall of response.tool_calls ?? []) {
+        const toolMessage = await searchTool.invoke(toolCall); // returns a ToolMessage
+        message.push(toolMessage);
+    }
+
+    // Sending the latest message [] to model
+    const newResponse = await modelWithStructured.invoke(message);
+    logParsedResponse(newResponse)
 
 } catch (error) {
     errorHandler(error)
