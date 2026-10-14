@@ -112,7 +112,9 @@ try {
 
     messages.push(response);
 
-    const checkForToolCallRecursive = async (aiResponse: AIMessageChunk) => {
+    const checkForToolCallRecursive = async (aiResponse: AIMessageChunk, maxTry: number = 5) => {
+        if (maxTry === 0)
+            throw new Error("Maximum allocated tool use reached")
         checkMaxTokens(response);
   
         if (aiResponse.response_metadata.stop_reason === "tool_use") {
@@ -131,7 +133,7 @@ try {
 
             const newResponse: AIMessageChunk = await bindTool.invoke(messages);
             if (aiResponse.response_metadata.stop_reason === "tool_use")
-                checkForToolCallRecursive(newResponse);
+                checkForToolCallRecursive(newResponse, maxTry--);
             else
                 logResponseContent(newResponse)
         } else {
