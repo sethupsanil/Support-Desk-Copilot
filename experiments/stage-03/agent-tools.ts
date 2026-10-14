@@ -42,7 +42,7 @@ try {
         const customerOrders = fakeOrders.filter(
             (v) => v.customerId === customerId.customerId,
         );
-        return customerOrders ? customerOrders : "Not found";
+        return customerOrders.length !== 0 ? customerOrders : "Not found";
     };
     // Get customer orders by customer id
 
@@ -115,7 +115,7 @@ try {
     const checkForToolCallRecursive = async (aiResponse: AIMessageChunk, maxTry: number = 5) => {
         if (maxTry === 0)
             throw new Error("Maximum allocated tool use reached")
-        checkMaxTokens(response);
+        checkMaxTokens(aiResponse);
   
         if (aiResponse.response_metadata.stop_reason === "tool_use") {
             // looping tool calls and calling tools
@@ -132,8 +132,9 @@ try {
             }
 
             const newResponse: AIMessageChunk = await bindTool.invoke(messages);
+            messages.push(newResponse)
             if (aiResponse.response_metadata.stop_reason === "tool_use")
-                checkForToolCallRecursive(newResponse, maxTry--);
+                await checkForToolCallRecursive(newResponse, --maxTry);
             else
                 logResponseContent(newResponse)
         } else {
@@ -141,7 +142,7 @@ try {
         }
     };
 
-    checkForToolCallRecursive(response);
+    await checkForToolCallRecursive(response);
 } catch (err) {
     errorHandler(err)
 }
