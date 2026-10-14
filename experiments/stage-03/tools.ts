@@ -5,7 +5,7 @@ import { checkMaxTokens } from "../../src/llm/checks.js";
 import { model } from "../../src/llm/model.js";
 import { errorHandler, logParsedResponse } from "../helper.js";
 const schema = z.object({
-    orderId: z.number().describe('Order id to search')
+    orderId: z.string().describe('Order id to search')
 })
 
 const outPutSchema = z.object({
@@ -68,6 +68,7 @@ try {
     const newResponse = await modelWithStructured.invoke(message);
     logParsedResponse(newResponse)
 
+    console.log(await searchTool.invoke({ orderId: "1" }))
 } catch (error) {
     errorHandler(error)
 }
